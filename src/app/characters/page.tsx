@@ -1,4 +1,5 @@
 'use client';
+
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/app';
@@ -7,14 +8,22 @@ import { useFavorites } from '@/hooks/useFavourites';
 import { useState, useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import SkeletonCard from '@/components/skeletonCard';
-import Link from "next/link";
+
+interface Character {
+  id: number;
+  name: string;
+  status: string;
+  image: string;
+  species?: string;
+  // add other fields you need
+}
 
 export default function CharactersPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { favorites, toggleFavorite } = useFavorites();
 
-   // controlled state
+  // controlled state
   const [search, setSearch] = useState(searchParams.get('q') || '');
   const [inputValue, setInputValue] = useState(search);
   const [status, setStatus] = useState(searchParams.get('status') || '');
@@ -44,7 +53,7 @@ export default function CharactersPage() {
   });
 
   // Client-side favorites loader (when status === 'favorites')
-  const [favChars, setFavChars] = useState<any[]>([]);
+  const [favChars, setFavChars] = useState<Character[]>([]);
   const [favLoading, setFavLoading] = useState(false);
 
   useEffect(() => {
@@ -56,7 +65,6 @@ export default function CharactersPage() {
       return;
     }
 
-    // if no favorites, short-circuit
     if (!favorites || favorites.length === 0) {
       setFavChars([]);
       setFavLoading(false);
@@ -71,14 +79,22 @@ export default function CharactersPage() {
         const chars = Array.isArray(res.data) ? res.data : [res.data];
         // apply the search filter client-side (search is debounced)
         const filtered = search
-          ? chars.filter((c: any) => c.name.toLowerCase().includes(search.toLowerCase()))
+          ? chars.filter((c: Character) =>
+              c.name.toLowerCase().includes(search.toLowerCase())
+            )
           : chars;
         setFavChars(filtered);
       })
-      .catch(() => { if (!cancelled) setFavChars([]); })
-      .finally(() => { if (!cancelled) setFavLoading(false); });
+      .catch(() => {
+        if (!cancelled) setFavChars([]);
+      })
+      .finally(() => {
+        if (!cancelled) setFavLoading(false);
+      });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [status, favorites, search]);
 
   // Input handler (keeps immediate typing feel, debounces actual search)
@@ -115,7 +131,6 @@ export default function CharactersPage() {
           <option value="favorites">★ Favorites</option>
         </select>
 
-        {/* optional: quick link to reset */}
         <button
           onClick={() => {
             setInputValue('');
@@ -134,13 +149,17 @@ export default function CharactersPage() {
         <>
           {favLoading ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
+              {Array.from({ length: 8 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
             </div>
           ) : favChars.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">No favorites yet{search ? ' matching your search' : ''}.</div>
+            <div className="p-6 text-center text-gray-500">
+              No favorites yet{search ? ' matching your search' : ''}.
+            </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {favChars.map((char: any) => (
+              {favChars.map((char) => (
                 <CharacterCard
                   key={char.id}
                   character={char}
@@ -155,7 +174,9 @@ export default function CharactersPage() {
         <>
           {isLoading && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
+              {Array.from({ length: 8 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
             </div>
           )}
 
@@ -172,7 +193,7 @@ export default function CharactersPage() {
 
           {!isLoading && !isError && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {data?.results?.map((char: any) => (
+              {data?.results?.map((char: Character) => (
                 <CharacterCard
                   key={char.id}
                   character={char}
@@ -185,19 +206,22 @@ export default function CharactersPage() {
         </>
       )}
 
-   
       {status !== 'favorites' && (
         <div className="flex justify-center gap-4 mt-8 cursor-pointer">
           <button
             disabled={page <= 1}
-            onClick={() => router.push(`/characters?q=${search}&status=${status}&page=${page - 1}`)}
+            onClick={() =>
+              router.push(`/characters?q=${search}&status=${status}&page=${page - 1}`)
+            }
             className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Prev
           </button>
           <button
             disabled={!data?.info?.next}
-            onClick={() => router.push(`/characters?q=${search}&status=${status}&page=${page + 1}`)}
+            onClick={() =>
+              router.push(`/characters?q=${search}&status=${status}&page=${page + 1}`)
+            }
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
@@ -207,4 +231,5 @@ export default function CharactersPage() {
     </div>
   );
 }
+
 
