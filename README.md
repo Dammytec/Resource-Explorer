@@ -7,11 +7,9 @@ Built to demonstrate performant UI, clean state management, and URL-driven navig
 
 ## Getting Started
 
-First, run the development server:
-
 # 1. Clone the repository
-git clone <your-repo-url>
-cd <resource-explorer>
+git clone https://github.com/Dammytec/Resource-Explorer.git
+cd resource-explorer
 
 # 2. Install dependencie
 npm install
