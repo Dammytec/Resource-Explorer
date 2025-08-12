@@ -1,36 +1,60 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+
+Rick & Morty Resource Explorer
+A single-page Next.js + TypeScript app for exploring Rick & Morty characters with search, filtering, pagination, and favorites.
+Built to demonstrate performant UI, clean state management, and URL-driven navigation.
+
 ## Getting Started
 
-First, run the development server:
+# 1. Clone the repository
+git clone https://github.com/Dammytec/Resource-Explorer.git
+cd resource-explorer
 
-```bash
+# 2. Install dependencie
+npm install
+
+# 3. Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+
+# 4. Open in browser
+http://localhost:3000
+
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Next.js (App Router) — routing, server rendering, and file-based structure
 
-## Learn More
+TypeScript — type safety & maintainability
 
-To learn more about Next.js, take a look at the following resources:
+Tailwind CSS — utility-first styling
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+TanStack Query — caching, background refetch, and request cancellation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+lodash.debounce — optimized search input handling     Key Features
 
-## Deploy on Vercel
+List View (/characters) with:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Debounced search bound to URL (?q=rick)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Status filter (alive, dead, unknown)
+
+Pagination controls
+
+Detail View (/characters/:id) with:
+
+Character info
+
+Favorite toggle
+
+Favorites: Stored in localStorage via useFavorites hook Accessible from both list & detail views
+
+Error Handling: Retry button on network failure Loading skeletons/placeholder states
+
+URL as Source of Truth: State restored on reload or direct link
+
+Supports back/forward navigation without losing context
+
+
+
